@@ -1,1 +1,36 @@
--- HTML for login page
+<!-- HTML for login page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lego Store Login</title>
+  <link rel="stylesheet" href="styles.css"> <!-- link to CSS file when done -->
+</head>
+<body>
+  <div class="login-container">
+    <h1>Welcome to BrickHub!</h1>
+    <form action="#" method="post" class="login-form">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+    
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+      <div class="remember-user">
+        <label>
+          <input type="checkbox" name="remember"> Remember Me
+        </label>
+      </div>
+      <br>
+      <div class ="forgot-password">
+        <a href="#">Forgot Password?</a>
+      </div>
+      <br>
+
+      <button type="submit">Login</button>
+
+      <p class="signup-link">Don't have an account? <a href="#">Sign up</a></p>
+    </form>
+  </div>
+</body>
+</html>

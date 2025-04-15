@@ -21,6 +21,10 @@ a.button{
     text-shadow: 1px 1px black;
 }
 
+div.login-container{
+    margin-bottom: 9px;
+}
+
 #products {
     display: grid;
     gap: 10px;

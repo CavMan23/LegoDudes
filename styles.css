@@ -5,6 +5,10 @@ header {
     margin-bottom: 10px;
 }
 
+body{
+    background-color: lightgrey;
+}
+
 header h1{
     color: white;
     text-shadow: 2px 2px black;

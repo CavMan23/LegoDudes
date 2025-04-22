@@ -27,14 +27,85 @@
 
     <script>
         function displayTable() {
-            alert("Data from table here");
+            fetch('http://127.0.0.1:5050/display', {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include'
+                })
+
+                .then(response => {
+                    if (!response.ok) {
+                        console.error("Server error:", response.status);
+                        throw new Error("Server error");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Received data:", data); // helpful logging!
+
+                    const tableDiv = document.getElementById("table");
+                    let html = "<table border='1'><tr>";
+
+                    // Header row
+                    data.columns.forEach(col => {
+                        html += `<th>${col}</th>`;
+                    });
+                    html += "</tr>";
+
+                    // Data rows
+                    data.rows.forEach(row => {
+                        html += "<tr>";
+                        data.columns.forEach(col => {
+                            html += `<td>${row[col]}</td>`;
+                        });
+                        html += "</tr>";
+                    });
+
+                    html += "</table>";
+                    tableDiv.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error("Error displaying table:", error);
+                    alert("Failed to fetch table data.");
+            });
         }
+
+    
         function truncateTable() {
-            alert("Data from table here");
+            fetch('http://127.0.0.1:5050/truncate', {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include'
+                })
+
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                displayTable();  // Refresh table view
+            })
+            .catch(error => {
+                console.error("Error truncating table:", error);
+                alert("Failed to truncate table.");
+            });
         }
+    
         function insertData() {
-            alert("Data from table here");
+            fetch('http://127.0.0.1:5050/insert', {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include'
+                })
+
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                displayTable();  // Refresh table view
+            })
+            .catch(error => {
+                console.error("Error inserting data:", error);
+                alert("Failed to insert data.");
+            });
         }
-    </script>
+    </script>    
 </body>
 </html>

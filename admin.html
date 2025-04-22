@@ -18,8 +18,18 @@
     <div class = "admin stuff">
         <button onclick="displayTable()">Display Table</button>
         <button onclick="truncateTable()">Truncate Table</button>
-        <button onclick="insertData()">Insert Data</button>
+        <p>INSERT FORM</p>
+        <form id="insertForm">
+            <input type="number" id="productid" placeholder="Product ID" required>
+            <input type="text" id="productname" placeholder="Product Name" required>
+            <input type="number" id="price" placeholder="Price" required>
+            <input type="text" id="status" placeholder="Status" required>
+            <input type="number" id="cartid" placeholder="Cart ID (optional)">
+            <button type="submit">Insert Data</button>
+          </form>
+        
     </div>
+    
 
     <div id="table">
         <p>Table Data Here</p>
@@ -73,7 +83,7 @@
     
         function truncateTable() {
             fetch('http://127.0.0.1:5050/truncate', {
-                method: 'GET',
+                method: 'POST',
                 mode: 'cors',
                 credentials: 'include'
                 })
@@ -89,23 +99,33 @@
             });
         }
     
-        function insertData() {
-            fetch('http://127.0.0.1:5050/insert', {
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'include'
-                })
+        document.getElementById('insertForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // stop form from refreshing the page
 
+            const data = {
+                productid: document.getElementById('productid').value,
+                productname: document.getElementById('productname').value,
+                price: document.getElementById('price').value,
+                status: document.getElementById('status').value,
+                cartid: document.getElementById('cartid').value || null  // optional
+            };
+
+            fetch('http://localhost:5050/insert', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
             .then(response => response.text())
-            .then(data => {
-                alert(data);
-                displayTable();  // Refresh table view
+            .then(msg => {
+                alert(msg);
+                displayTable();  // refresh view
             })
             .catch(error => {
                 console.error("Error inserting data:", error);
-                alert("Failed to insert data.");
+                alert("Insert failed.");
             });
-        }
+        });
+
     </script>    
 </body>
 </html>

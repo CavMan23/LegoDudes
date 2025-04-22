@@ -1,13 +1,18 @@
+// website used to implement and understand cors: https://medium.com/zero-equals-false/using-cors-in-express-cac7e29b005b 
+// discussion that is relevant: https://www.reddit.com/r/javascript/comments/8fcxus/help_on_api_using_express_nodejs_and_sql/ 
+// inputting nodejs variable into sql query: https://stackoverflow.com/questions/41168942/how-to-input-a-nodejs-variable-into-an-sql-query 
+
+
+
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 
 const app = express();
 
-// ✅ CORS fix — allow only requests from localhost:3000
 app.use(cors({
   origin: ['http://127.0.0.1:3000', 'http://localhost:3000'],
-  credentials: true // 👈 This is what was missing!
+  credentials: true 
 }));
 
 app.use(express.json());
@@ -47,17 +52,21 @@ app.post('/truncate', async (req, res) => {
 
 // Route: POST /insert
 app.post('/insert', async (req, res) => {
-  try {
-    await pool.query(`
-      INSERT INTO inventory (productid, productname, price, status, cartid)
-      VALUES (999, 'Test Set', 999, 'In Stock', NULL);
-    `);
-    res.send('Test data inserted successfully');
-  } catch (err) {
-    console.error('Error in /insert:', err);
-    res.status(500).send(err.message);
-  }
-});
+    const { productid, productname, price, status, cartid } = req.body;
+  
+    try {
+      await pool.query(
+        `INSERT INTO inventory (productid, productname, price, status, cartid)
+         VALUES ($1, $2, $3, $4, $5);`,
+        [productid, productname, price, status, cartid || null]
+      );
+      res.send('Test data inserted successfully!');
+    } catch (err) {
+      console.error('Error in /insert:', err);
+      res.status(500).send(err.message);
+    }
+  });
+  
 
 // Start server
 app.listen(5050, () => {

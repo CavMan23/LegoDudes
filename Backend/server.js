@@ -168,6 +168,6 @@ app.use('/api', apiRouter);
 
 
 // Start server
-app.listen(5050, () => {
+app.listen(3000, () => {
   console.log('🚀 Server running at http://localhost:5050');
 });

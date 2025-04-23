@@ -1,7 +1,7 @@
 services:
   nginx:
     image: nginx:latest
-    container_name: L27_nginx_server
+    container_name: lego_nginx_server
     ports:
       - "80:80"
     volumes:
@@ -14,7 +14,7 @@ services:
 
   backend:
     build: ./backend
-    container_name: L27_express_backend
+    container_name: LegoGoonsBackEnd
     env_file:
       - .env  # Load environment variables
     volumes:
@@ -26,7 +26,7 @@ services:
 
   db:
     image: postgres:latest
-    container_name: L27_postgres_db
+    container_name: lego_db
     env_file:
       - .env  # load same environment variables
     volumes:

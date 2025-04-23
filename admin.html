@@ -13,7 +13,6 @@
     </nav>
 
     <h1>Admin Dashboard</h1>
-    <p>Lego Inventory</p>
 
     <div class = "admin stuff">
         <p>DISPLAY</p>
@@ -36,10 +35,22 @@
             <input type="number" id="cartid" placeholder="Cart ID (optional)">
             <button type="submit">Insert Data</button>
           </form>
-        
+          <h3>Drop Table</h3>
+          <form id="dropTableForm">
+            <input type="text" id="dropTableName" placeholder="Table Name to Drop" required>
+            <button type="submit">Drop Table</button>
+          </form>
+          
+          <!-- Create Table Form -->
+          <h3>Create Table</h3>
+          <form id="createTableForm">
+            <textarea id="createTableSQL" placeholder="Enter CREATE TABLE SQL" rows="5" cols="60" required></textarea>
+            <br>
+            <button type="submit">Create Table</button>
+          </form>
+
     </div>
     
-
     <div id="table">
         <p>Table Data Here</p>
     </div>
@@ -136,6 +147,39 @@
                 alert("Insert failed.");
             });
         });
+
+                // Handle DROP TABLE
+        document.getElementById('dropTableForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const tableName = document.getElementById('dropTableName').value;
+
+        if (confirm(`Are you sure you want to DROP the table '${tableName}'?`)) {
+            fetch('http://localhost:5050/drop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tableName })
+            })
+            .then(res => res.text())
+            .then(msg => alert(msg))
+            .catch(err => alert('Drop failed: ' + err));
+        }
+        });
+
+        // Handle CREATE TABLE
+        document.getElementById('createTableForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const tableSQL = document.getElementById('createTableSQL').value;
+
+        fetch('http://localhost:5050/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tableSQL })
+        })
+        .then(res => res.text())
+        .then(msg => alert(msg))
+        .catch(err => alert('Create failed: ' + err));
+        });
+
 
     </script>    
 </body>

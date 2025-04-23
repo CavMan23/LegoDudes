@@ -124,9 +124,9 @@ app.post('/insert', async (req, res) => {
         [username, hashedPassword]
       );
   
-      res.send('✅ User registered successfully!');
+      res.send('User registered successfully!');
     } catch (err) {
-      console.error('❌ Error in /signup:', err);
+      console.error('Error in /signup:', err);
       if (err.code === '23505') { // unique_violation
         res.status(409).send('Username already exists.');
       } else {
@@ -135,6 +135,34 @@ app.post('/insert', async (req, res) => {
     }
   });
   */
+
+// Route: POST /drop
+app.post('/drop', async (req, res) => {
+    const { tableName } = req.body;
+  
+    try {
+      await pool.query(`DROP TABLE IF EXISTS ${tableName}`);
+      res.send(`Table '${tableName}' dropped successfully :)`);
+    } catch (err) {
+      console.error('Error in /drop:', err);
+      res.status(500).send(err.message);
+    }
+  });
+  
+  // Route: POST /create
+  app.post('/create', async (req, res) => {
+    const { tableSQL } = req.body; // full CREATE TABLE SQL
+  
+    try {
+      await pool.query(tableSQL);
+      res.send(`Table created successfully :)`);
+    } catch (err) {
+      console.error('Error in /create:', err);
+      res.status(500).send(err.message);
+    }
+  });
+
+
 // Start server
 app.listen(5050, () => {
   console.log('🚀 Server running at http://localhost:5050');

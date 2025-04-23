@@ -7,7 +7,7 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
 
 const path = require('path');
 
@@ -41,22 +41,19 @@ app.post('/auth', function(request, response) {
 	// Ensure the input fields exists and are not empty
 	if (username && password) {
 		// Execute SQL query that'll select the account from the database based on the specified username and password
-		pool.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+		pool.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password], function(error, results, fields) {
 			// If there is an issue with the query, output the error
-			if (error) throw error;
+		if (error) throw error;
 			// If the account exists
-			if (results.length > 0) {
-				// Authenticate the user
-				request.session.loggedin = true;
-				request.session.username = username;
-				// Redirect to home page
-				response.redirect('BrowsingPage.html');
-			} else {
-				response.send('Incorrect Username and/or Password!');
-			}			
+			if (results.rows.length > 0) {
+                response.send("Success");
+              } else {
+                response.status(401).send("Incorrect Username and/or Password!");
+              }
+                  
 			response.end();
-		});
-	} else {
+		    });
+	    } else {
 		response.send('Please enter Username and Password!');
 		response.end();
 	}
@@ -64,16 +61,27 @@ app.post('/auth', function(request, response) {
 
 // Route: GET /display
 app.get('/display', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM inventory LIMIT 25;');
-    const columns = result.fields.map(f => f.name);
-    const rows = result.rows;
-    res.json({ columns, rows });
-  } catch (err) {
-    console.error('Error in /display:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
+    const { table, limit } = req.query;
+  
+    // Validate table name (to prevent SQL injection)
+    const allowedTables = ['inventory', 'users', 'orders', 'cart'];
+    if (!allowedTables.includes(table)) {
+      return res.status(400).json({ error: 'Invalid table name' });
+    }
+  
+    const rowLimit = parseInt(limit) || 25;
+  
+    try {
+      const result = await pool.query(`SELECT * FROM ${table} LIMIT $1`, [rowLimit]);
+      const columns = result.fields.map(f => f.name);
+      const rows = result.rows;
+      res.json({ columns, rows });
+    } catch (err) {
+      console.error('Error in /display:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
 
 // Route: POST /truncate
 app.post('/truncate', async (req, res) => {
@@ -103,7 +111,7 @@ app.post('/insert', async (req, res) => {
     }
   });
   
-  app.post('/signup', async (req, res) => {
+  /* app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
   
     try {
@@ -126,7 +134,7 @@ app.post('/insert', async (req, res) => {
       }
     }
   });
-  
+  */
 // Start server
 app.listen(5050, () => {
   console.log('🚀 Server running at http://localhost:5050');

@@ -13,7 +13,7 @@
   </header> 
   <div class="login-container">
     <!-- <h1>Welcome to BrickHub!</h1> -->
-    <form action="/auth" method="post" class="login-form">
+    <form action="http://localhost:5050/auth" method="post" class="login-form">
       <label for="username">Username:</label>
       <input type="text" id="username" name="username" required>
     
@@ -27,12 +27,12 @@
         </label>
       </div>
       <br>
-      <a href="http://127.0.0.1:3000/LegoDudes/Forgot.html" class="Forgot">Forgot Password?</a>
+      <a href="Forgot.html" class="Forgot">Forgot Password?</a>
       <br>
       <br>
-      <a href="http://127.0.0.1:3000/LegoDudes/BrowsingPage.html" class="login">Login</a>
+      <button type="submit">Login</button>
 
-      <p class="signup-link">Don't have an account? <a href="http://127.0.0.1:3000/LegoDudes/SignUp.html" class="SignUp">Create Account</a>
+      <p class="signup-link">Don't have an account? <a href="SignUp.html" class="SignUp">Create Account</a>
       </p>
     </form>
   </div>
@@ -48,5 +48,27 @@
 <footer> 
   <p>&copy; 2025 BrickHub</p> 
 </footer> 
+<script>
+  document.querySelector('.login-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+  
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+  
+    const res = await fetch('http://localhost:5050/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+  
+    const text = await res.text();
+    if (res.ok && text.includes("Success")) {
+      window.location.href = 'BrowsingPage.html';  // client-side redirect
+    } else {
+      alert(text);
+    }
+  });
+  </script>
+  
 </body>
 </html>

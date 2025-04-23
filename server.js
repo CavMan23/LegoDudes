@@ -7,6 +7,7 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -22,7 +23,7 @@ const pool = new Pool({
   host: 'localhost',
   user: 'postgres',      // change if needed
   database: 'postgres',  // change if needed
-  password: 'password',          // fill in if your DB has one
+  password: 'password',  // fill in if your DB has one
   port: 5432             // default PostgreSQL port
 });
 
@@ -67,7 +68,30 @@ app.post('/insert', async (req, res) => {
     }
   });
   
-
+  app.post('/signup', async (req, res) => {
+    const { username, password } = req.body;
+  
+    try {
+      // Hash the password with bcrypt
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      // Insert the new user
+      await pool.query(
+        'INSERT INTO users (username, password) VALUES ($1, $2)',
+        [username, hashedPassword]
+      );
+  
+      res.send('✅ User registered successfully!');
+    } catch (err) {
+      console.error('❌ Error in /signup:', err);
+      if (err.code === '23505') { // unique_violation
+        res.status(409).send('Username already exists.');
+      } else {
+        res.status(500).send('Error registering user.');
+      }
+    }
+  });
+  
 // Start server
 app.listen(5050, () => {
   console.log('🚀 Server running at http://localhost:5050');

@@ -62,7 +62,7 @@
             const tableName = document.getElementById('tableName').value;
             const size = document.getElementById('size').value;
 
-            fetch(`/api/display?table=${tableName}&limit=${size}`, {
+            fetch(`/display?table=${tableName}&limit=${size}`, {
                 method: 'GET',
                 mode: 'cors',
                 credentials: 'include'
@@ -104,7 +104,7 @@
         });
 
         function truncateTable() {
-            fetch('/api/truncate', {
+            fetch('/truncate', {
                 method: 'POST',
                 mode: 'cors',
                 credentials: 'include'
@@ -132,7 +132,7 @@
                 cartid: document.getElementById('cartid').value || null  // optional
             };
 
-            fetch('/api/insert', {
+            fetch('/insert', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -154,7 +154,7 @@
         const tableName = document.getElementById('dropTableName').value;
 
         if (confirm(`Are you sure you want to DROP the table '${tableName}'?`)) {
-            fetch('/api/drop', {
+            fetch('/drop', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ tableName })
@@ -170,7 +170,7 @@
         e.preventDefault();
         const tableSQL = document.getElementById('createTableSQL').value;
 
-        fetch('/api/create', {
+        fetch('/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ tableSQL })

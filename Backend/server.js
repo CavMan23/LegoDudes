@@ -12,6 +12,8 @@ const { Pool } = require('pg');
 const path = require('path');
 
 const app = express();
+const apiRouter = express.Router();
+
 
 app.use(cors({
   origin: ['http://127.0.0.1:3000', 'http://localhost:3000'],
@@ -161,6 +163,8 @@ app.post('/drop', async (req, res) => {
       res.status(500).send(err.message);
     }
   });
+
+app.use('/api', apiRouter);
 
 
 // Start server

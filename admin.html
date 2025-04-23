@@ -16,8 +16,17 @@
     <p>Lego Inventory</p>
 
     <div class = "admin stuff">
-        <button onclick="displayTable()">Display Table</button>
-        <button onclick="truncateTable()">Truncate Table</button>
+        <p>DISPLAY</p>
+        <form id="displayForm">
+            <input type="text" id="tableName" placeholder="Table Name" required>
+            <input type="number" id="size" placeholder="Size" required>
+            <button onclick="displayTable()">Display Table</button>
+        </form>
+
+        <br>
+        <button onclick="if(confirm('Are you sure?')) truncateTable()">Truncate Table</button>
+
+
         <p>INSERT FORM</p>
         <form id="insertForm">
             <input type="number" id="productid" placeholder="Product ID" required>
@@ -36,51 +45,53 @@
     </div>
 
     <script>
-        function displayTable() {
-            fetch('http://127.0.0.1:5050/display', {
+        document.getElementById('displayForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const tableName = document.getElementById('tableName').value;
+            const size = document.getElementById('size').value;
+
+            fetch(`http://127.0.0.1:5050/display?table=${tableName}&limit=${size}`, {
                 method: 'GET',
                 mode: 'cors',
                 credentials: 'include'
-                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error("Server error:", response.status);
+                    throw new Error("Server error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Received data:", data);
+                const tableDiv = document.getElementById("table");
+                let html = "<table border='1'><tr>";
 
-                .then(response => {
-                    if (!response.ok) {
-                        console.error("Server error:", response.status);
-                        throw new Error("Server error");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("Received data:", data); // helpful logging!
+                // Header row
+                data.columns.forEach(col => {
+                    html += `<th>${col}</th>`;
+                });
+                html += "</tr>";
 
-                    const tableDiv = document.getElementById("table");
-                    let html = "<table border='1'><tr>";
-
-                    // Header row
+                // Data rows
+                data.rows.forEach(row => {
+                    html += "<tr>";
                     data.columns.forEach(col => {
-                        html += `<th>${col}</th>`;
+                        html += `<td>${row[col]}</td>`;
                     });
                     html += "</tr>";
+                });
 
-                    // Data rows
-                    data.rows.forEach(row => {
-                        html += "<tr>";
-                        data.columns.forEach(col => {
-                            html += `<td>${row[col]}</td>`;
-                        });
-                        html += "</tr>";
-                    });
-
-                    html += "</table>";
-                    tableDiv.innerHTML = html;
-                })
-                .catch(error => {
-                    console.error("Error displaying table:", error);
-                    alert("Failed to fetch table data.");
+                html += "</table>";
+                tableDiv.innerHTML = html;
+            })
+            .catch(error => {
+                console.error("Error displaying table:", error);
+                alert("Failed to fetch table data.");
             });
-        }
+        });
 
-    
         function truncateTable() {
             fetch('http://127.0.0.1:5050/truncate', {
                 method: 'POST',

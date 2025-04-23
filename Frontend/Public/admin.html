@@ -23,7 +23,7 @@
         </form>
 
         <br>
-        <button onclick="if(confirm('Are you sure?')) truncateTable()">Truncate Table</button>
+        <button onclick="if(confirm('Are you sure?')) truncateTable()">Truncate Table</button> <!-- wanted an extra step to ensure u mean to do this lol-->
 
 
         <p>INSERT FORM</p>
@@ -41,7 +41,7 @@
             <button type="submit">Drop Table</button>
           </form>
           
-          <!-- Create Table Form -->
+          <!-- create table -->
           <h3>Create Table</h3>
           <form id="createTableForm">
             <textarea id="createTableSQL" placeholder="Enter CREATE TABLE SQL" rows="5" cols="60" required></textarea>
@@ -113,7 +113,7 @@
             .then(response => response.text())
             .then(data => {
                 alert(data);
-                displayTable();  // Refresh table view
+                displayTable();  // refresh table view
             })
             .catch(error => {
                 console.error("Error truncating table:", error);
@@ -148,7 +148,7 @@
             });
         });
 
-                // Handle DROP TABLE
+        // drop table
         document.getElementById('dropTableForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const tableName = document.getElementById('dropTableName').value;
@@ -165,7 +165,7 @@
         }
         });
 
-        // Handle CREATE TABLE
+        // create table
         document.getElementById('createTableForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const tableSQL = document.getElementById('createTableSQL').value;

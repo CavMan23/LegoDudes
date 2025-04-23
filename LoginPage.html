@@ -1,55 +1,52 @@
+<!-- HTML for login page -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BrickHub Sign Up</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Lego Store Login</title>
+  <link rel="stylesheet" href="styles.css"> 
 </head>
 <body>
-  <header>
-    <h1>BrickHub Sign Up Page!</h1>
-  </header>
-
-  <h3>Enter Username and Password</h3>
-
+  <header> 
+    <h1>BrickHub</h1> 
+  </header> 
   <div class="login-container">
+    <!-- <h1>Welcome to BrickHub!</h1> -->
     <form action="/auth" method="post" class="login-form">
       <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required><br><br>
-
+      <input type="text" id="username" name="username" required>
+    
       <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required><br><br>
+      <input type="password" id="password" name="password" required>
+      <br>
+      <br>
+      <div class="remember-user">
+        <label>
+          <input type="checkbox" name="remember"> Remember Me
+        </label>
+      </div>
+      <br>
+      <a href="http://127.0.0.1:3000/LegoDudes/Forgot.html" class="Forgot">Forgot Password?</a>
+      <br>
+      <br>
+      <a href="http://127.0.0.1:3000/LegoDudes/BrowsingPage.html" class="login">Login</a>
 
-      <button type="submit">Create Account</button>
+      <p class="signup-link">Don't have an account? <a href="http://127.0.0.1:3000/LegoDudes/SignUp.html" class="SignUp">Create Account</a>
+      </p>
     </form>
   </div>
-
-  <script>
-    const form = document.querySelector('.login-form');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const username = form.username.value;
-      const password = form.password.value;
-
-      try {
-        const response = await fetch('http://localhost:5050/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password })
-        });
-
-        const result = await response.text();
-        alert(result);
-        form.reset();
-      } catch (error) {
-        alert('Signup failed. See console for details.');
-        console.error('Error:', error);
-      }
-    });
-  </script>
+  <nav> 
+    <div>
+      Additional Info:
+    </div>
+    <ul> 
+        <li><a href="#about">About</a></li> <!-- Place holder links for later-->
+        <li><a href="#contact">Contact</a></li> 
+    </ul> 
+</nav> 
+<footer> 
+  <p>&copy; 2025 BrickHub</p> 
+</footer> 
 </body>
 </html>

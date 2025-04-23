@@ -50,3 +50,17 @@ footer {
     text-align: center;
     color: black;
 }
+
+/* copy pasted from lesson 4 slides */ 
+th { 
+    background-color: #333;
+    color: white;
+    }
+    /* Zebra striping for table rows */
+    tr:nth-of-type(odd) {
+    background-color: #f9f9f9; /* Light grey for odd rows */
+    }
+    tr:nth-of-type(even) {
+    background-color: #ffffff; /* White for even rows */
+    }
+    

@@ -74,11 +74,11 @@ app.post("/register", async (req, res) => {
   console.log(`server.js: register password: ${password}`);
   console.log(`server.js: register role: ${role}`);
 
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
+  //const salt = crypto.randomBytes(16).toString("hex");
+  //const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
 
   const query = 'INSERT INTO users (user_id, username, password, email, user_status) VALUES ($1, $2, $3, $4, $5)';
-  const values = [ID, username, email, hash, role]; // use the hashed password!
+  const values = [ID, username, email, password, role]; // use the hashed password!
   
   console.log("trying query with these values...");
   console.log(values);

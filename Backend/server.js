@@ -8,6 +8,7 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 //const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const path = require('path');
 
@@ -66,7 +67,7 @@ app.post("/register", async (req, res) => {
   console.log("server.js: register ");
   const { username, email, password, role } = req.body;
 
-  const ID = Math.random();
+  const ID = Math.floor(Math.random() * 1000000); // random int from 0 to 999999
 
   console.log(`server.js: register username: ${username}`);
   console.log(`server.js: register email: ${email}`);
@@ -76,9 +77,9 @@ app.post("/register", async (req, res) => {
   const salt = crypto.randomBytes(16).toString("hex");
   const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
 
-  const query = 'INSERT INTO users (User_ID, username, email, password, User_status) VALUES ($1, $2, $3, $4, $5) RETURNING id';
-
-  const values = [ID, username, email, password, role];
+  const query = 'INSERT INTO users (user_id, username, password, email, user_status) VALUES ($1, $2, $3, $4, $5)';
+  const values = [ID, username, email, hash, role]; // use the hashed password!
+  
   console.log("trying query with these values...");
   console.log(values);
 
@@ -202,5 +203,5 @@ app.use('/api', apiRouter);
 
 // Start server
 app.listen(3000, () => {
-  console.log('🚀 Server running at http://localhost:5050');
+  console.log('🚀 Server running at http://localhost:3000');
 });

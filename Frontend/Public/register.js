@@ -14,7 +14,7 @@ async function register(event) {
         username: formData.get("username"),
         email: formData.get("email"),
         password: formData.get("password"),
-        role: false
+        role: "false"
     };
 
     const jsonBody = JSON.stringify(userData);

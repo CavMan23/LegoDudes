@@ -51,18 +51,18 @@
 
     </div>
     
-    <div id="table">
+    <div id="table"> <!-- may need to rename to something else later since we don't want every table to be zebra striped? -->
         <p>Table Data Here</p>
     </div>
 
     <script>
         document.getElementById('displayForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+            event.preventDefault(); // help from https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault 
 
             const tableName = document.getElementById('tableName').value;
             const size = document.getElementById('size').value;
 
-            fetch(`/api/display?table=${tableName}&limit=${size}`, {
+            fetch(`/api/display?table=${tableName}&limit=${size}`, { // help from https://stackoverflow.com/questions/35038857/setting-query-string-using-fetch-get-request 
                 method: 'GET',
                 mode: 'cors',
                 credentials: 'include'
@@ -80,6 +80,7 @@
                 let html = "<table border='1'><tr>";
 
                 // Header row
+                // help from this geeksforgeeks: https://www.geeksforgeeks.org/how-to-create-an-html-table-from-an-object-array-using-javascript/ 
                 data.columns.forEach(col => {
                     html += `<th>${col}</th>`;
                 });

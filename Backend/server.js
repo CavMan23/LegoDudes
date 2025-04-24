@@ -61,6 +61,22 @@ app.post('/auth', function(request, response) {
 	}
 });
 
+app.post('/sign', function(request, response) {
+	// Capture the input fields
+	let username = request.body.username;
+	let password = request.body.password;
+	// Ensure the input fields exists and are not empty
+	if (username && password) {
+		// Execute SQL query that'll select the account from the database based on the specified username and password
+      var sql = "INSERT INTO users (username, password) VALUES (username, password)";
+      pool.query(sql, function (err, result) {
+      });
+	    } else {
+		response.send('Please enter Username and Password!');
+		response.end();
+	}
+});
+
 // Route: GET /display
 app.get('/display', async (req, res) => {
     const { table, limit } = req.query;

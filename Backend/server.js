@@ -61,20 +61,37 @@ app.post('/auth', function(request, response) {
 	}
 });
 
-app.post('/sign', function(request, response) {
-	// Capture the input fields
-	let username = request.body.username;
-	let password = request.body.password;
-	// Ensure the input fields exists and are not empty
-	if (username && password) {
-		// Execute SQL query that'll select the account from the database based on the specified username and password
-      var sql = "INSERT INTO users (username, password) VALUES (username, password)";
-      pool.query(sql, function (err, result) {
-      });
-	    } else {
-		response.send('Please enter Username and Password!');
-		response.end();
-	}
+app.post("/register", async (req, res) => {
+
+  console.log("server.js: register ");
+  const { username, email, password, role } = req.body;
+
+  const ID = Math.random();
+
+  console.log(`server.js: register username: ${username}`);
+  console.log(`server.js: register email: ${email}`);
+  console.log(`server.js: register password: ${password}`);
+  console.log(`server.js: register role: ${role}`);
+
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
+
+  const query = 'INSERT INTO users (User_ID, username, email, password, User_status) VALUES ($1, $2, $3, $4, $5) RETURNING id';
+
+  const values = [ID, username, email, password, role];
+  console.log("trying query with these values...");
+  console.log(values);
+
+  try {
+    const result = await pool.query(query, values);
+    console.log("user NOW registered ... going to respond");
+    console.log(result);
+    res.json({ success: true, message: `${role} account created`, username: `${username}` }); 
+  } catch (error) {
+    console.log("in catch block of server.js/register");
+    console.log(error);
+    res.json({ success: false, message: 'Username or email already exists.' });
+  }
 });
 
 // Route: GET /display

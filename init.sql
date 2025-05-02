@@ -1,7 +1,8 @@
 CREATE TABLE Users (
     User_ID INT PRIMARY KEY,
     Username VARCHAR(100) NOT NULL,
-    Password VARCHAR(100) NOT NULL,
+    hash CHAR(128) NOT NULL,
+    salt CHAR(32) NOT NULL,
     Email VARCHAR(100) NOT NULL,
     User_status BOOLEAN NOT NULL
 );

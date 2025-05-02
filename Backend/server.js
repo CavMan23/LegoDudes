@@ -7,6 +7,7 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const session = require("express-session");
 //const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
@@ -26,7 +27,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'static')));
 
-
+//session stuff
+app.use(session({
+  secret: 'mySecretKey', // ⚠️ Put this in .env for production
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    secure: false
+  }
+}));
 
 // PostgreSQL connection setup
 const pool = new Pool({
@@ -37,29 +47,50 @@ const pool = new Pool({
   port: 5432             // default PostgreSQL port
 });
 
-app.post('/auth', function(request, response) {
-	// Capture the input fields
-	let username = request.body.username;
-	let password = request.body.password;
-	// Ensure the input fields exists and are not empty
-	if (username && password) {
-		// Execute SQL query that'll select the account from the database based on the specified username and password
-		pool.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password], function(error, results, fields) {
-			// If there is an issue with the query, output the error
-		if (error) throw error;
-			// If the account exists
-			if (results.rows.length > 0) {
-                response.send("Success");
-              } else {
-                response.status(401).send("Incorrect Username and/or Password!");
-              }
-                  
-			response.end();
-		    });
-	    } else {
-		response.send('Please enter Username and Password!');
-		response.end();
-	}
+app.post('/auth', async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: 'Please enter Username and Password!' });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM users WHERE username = $1 AND password = $2',
+      [username, password]
+    );
+
+    const user = result.rows[0];
+
+    if (user) {
+      // Set session object
+      req.session.user = {
+        id: user.user_id,
+        username: user.username,
+        role: user.user_status
+      };
+
+      return res.json({
+        success: true,
+        message: 'Logged in successfully',
+        user: req.session.user
+      });
+    } else {
+      return res.status(401).json({ success: false, message: 'Incorrect Username and/or Password!' });
+    }
+  } catch (error) {
+    console.error('Error in /auth:', error);
+    return res.status(500).json({ success: false, message: 'Server error during login' });
+  }
+});
+
+
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) return res.status(500).send('Logout error');
+    res.clearCookie('connect.sid');
+    res.json({ message: 'Logged out' });
+  });
 });
 
 app.post("/register", async (req, res) => {
@@ -200,8 +231,30 @@ app.post('/drop', async (req, res) => {
 
 app.use('/api', apiRouter);
 
+//this will be used for the session stuff
+app.get('/session', (req, res) => {
+  if (req.session.user) {
+    res.json({ loggedIn: true, user: req.session.user });
+  } else {
+    res.json({ loggedIn: false });
+  }
+});
+
+function ensureAdmin(req, res, next) {
+  if (req.session.user && req.session.user.role === 'admin') {
+    return next();
+  }
+  return res.status(403).json({ message: 'Admins only' });
+}
+
+function ensureAuthenticated(req, res, next) {
+  if (req.session.user) {
+    return next();
+  }
+  return res.status(401).json({ message: 'Not logged in' });
+}
 
 // Start server
 app.listen(3000, () => {
-  console.log('🚀 Server running at http://localhost:3000');
+  console.log('Server running at http://localhost:3000');
 });

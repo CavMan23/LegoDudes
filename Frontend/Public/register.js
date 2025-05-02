@@ -23,6 +23,7 @@ async function register(event) {
         const response = await fetch("/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: jsonBody // JSON.stringify(userData)
         });
 

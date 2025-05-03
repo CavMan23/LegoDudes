@@ -108,7 +108,7 @@ app.post("/register", async (req, res) => {
   const salt = crypto.randomBytes(16).toString("hex");
   const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
 
-  const query = 'INSERT INTO users (user_id, username, password, email, user_status) VALUES ($1, $2, $3, $4, $5)';
+  const query = 'INSERT INTO users (user_id, username, hash, salt, email, user_status) VALUES ($1, $2, $3, $4, $5, $6)';
   const values = [ID, username, hash, salt, email, role]; // use the hashed password!
   
   console.log("trying query with these values...");
@@ -122,7 +122,12 @@ app.post("/register", async (req, res) => {
   } catch (error) {
     console.log("in catch block of server.js/register");
     console.log(error);
-    res.json({ success: false, message: 'Username or email already exists.' });
+    if (error.code === '23505') {
+      res.json({ success: false, message: 'Username or email already exists.' });
+    } else {
+      console.error('Registration error:', error.message);
+      res.status(500).json({ success: false, message: 'Registration failed: ' + error.message });
+    }    
   }
 });
 

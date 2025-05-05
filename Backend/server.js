@@ -56,7 +56,7 @@ app.post('/auth', async (req, res) => {
 
   try {
     
-    const user = (await db.query("SELECT * FROM users WHERE username = $1", [username])).rows[0];
+    const user = (await pool.query("SELECT * FROM users WHERE username = $1", [username])).rows[0];
     if (!user) return res.status(401).json({ message: "Login failUre" });
 
     const hash = crypto.pbkdf2Sync(password, user.salt, 1000, 64, "sha512").toString("hex");
@@ -233,6 +233,64 @@ app.post('/drop', async (req, res) => {
       res.status(500).send(err.message);
     }
   });
+
+  app.post('/cart/add', async (req, res) => {
+    const { productId } = req.body;
+  
+    if (!req.session.user) {
+      return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+  
+    const userId = req.session.user.id;
+  
+    try {
+      // Get or create user's cart
+      let result = await pool.query('SELECT cartid FROM cart WHERE userid = $1', [userId]);
+      let cartId;
+  
+      if (result.rows.length > 0) {
+        cartId = result.rows[0].cartid;
+      } else {
+        // Create new cart
+        const newCartId = Math.floor(Math.random() * 1000000);
+        await pool.query('INSERT INTO cart (cartid, userid, price, status) VALUES ($1, $2, $3, $4)',
+          [newCartId, userId, 0, 'Active']);
+        cartId = newCartId;
+      }
+  
+      // Assign product to cart and set status
+      await pool.query(
+        'UPDATE inventory SET cartid = $1, status = $2 WHERE productid = $3',
+        [cartId, 'Reserved', productId]
+      );
+  
+      res.json({ success: true, message: 'Item added to cart' });
+    } catch (err) {
+      console.error('Error in /api/cart/add:', err);
+      res.status(500).json({ success: false, message: 'Server error while adding to cart' });
+    }
+  });
+
+  app.get('/cart/items', async (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+  
+    try {
+      const userId = req.session.user.id;
+      const result = await pool.query(`
+        SELECT i.* FROM inventory i
+        JOIN cart c ON i.cartid = c.cartid
+        WHERE c.userid = $1
+      `, [userId]);
+  
+      res.json({ success: true, items: result.rows });
+    } catch (err) {
+      console.error('Error in /api/cart/items:', err);
+      res.status(500).json({ success: false, message: 'Failed to load cart' });
+    }
+  });
+
 
 app.use('/api', apiRouter);
 

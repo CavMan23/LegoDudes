@@ -1,32 +1,60 @@
-<!-- cart html file -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BrickHub Cart</title>
-    <link rel="stylesheet" href="styles.css">
-    <!--<link rel="stylesheet" href="../assets/css/aboutMe.css"> -->
-  </head>
-  <body>
-    <header> 
-      <h1>BrickHub</h1> 
-  </header> 
-    <a href="BrowsingPage.html" class="button">Home</a>
-    <h1>Your Cart</h1>
-    <main id="products"> 
-      <section class="product"> 
-          <h2>Product 1</h2> 
-          <img src="" alt="Product 1"> 
-          <p>Description of Product 1.</p> 
-          <p>Price:</p> 
-          <button>Remove from Cart</button> 
-      </section> 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BrickHub Cart</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>BrickHub</h1>
+  </header>
 
-    </main> 
+  <a href="BrowsingPage.html" class="button">Home</a>
+  <h1>Your Cart</h1>
 
-    <footer> 
-      <p>&copy; 2025 BrickHub</p> 
-    </footer> 
-  </body>
+  <main id="products">
+    <!-- Cart items will be injected here -->
+  </main>
+
+  <footer>
+    <p>&copy; 2025 BrickHub</p>
+  </footer>
+
+  <script>
+    async function loadCart() {
+      const res = await fetch('/api/cart/items', { credentials: 'include' });
+  
+      const main = document.getElementById('products');
+      main.innerHTML = ''; // Clear placeholder
+  
+      if (!res.ok) {
+        main.innerHTML = '<p>Error loading cart.</p>';
+        return;
+      }
+  
+      const data = await res.json();
+  
+      if (!data || !Array.isArray(data.items) || data.items.length === 0) {
+        main.innerHTML = '<p>Your cart is empty.</p>';
+      } else {
+        data.items.forEach(item => {
+          const section = document.createElement('section');
+          section.className = 'product';
+          section.innerHTML = `
+            <h2>${item.productname}</h2>
+            <img src="assets/images/placeholder.jpg" alt="${item.productname}" style="width:150px;height:auto;">
+            <p>Description of ${item.productname}.</p>
+            <p>Price: $${item.price}</p>
+            <p>Status: ${item.status}</p>
+          `;
+          main.appendChild(section);
+        });
+      }
+    }
+  
+    window.onload = loadCart;
+  </script>  
+</body>
 </html>

@@ -64,3 +64,10 @@ th {
     background-color: #ffffff; /* White for even rows */
     }
     
+.product img {
+    width: 100%;         /* Stretch to fill the tile width */
+    max-height: 200px;   /* Limit height so it doesn’t overflow */
+    object-fit: contain; /* Keep image proportions (no squish) */
+    display: block;      /* Removes inline spacing below the image */
+    margin: 0 auto;      /* Center the image if smaller than the tile */
+}

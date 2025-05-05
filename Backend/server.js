@@ -291,6 +291,24 @@ app.post('/drop', async (req, res) => {
     }
   });
 
+  app.get('/inventory/items', async (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+  
+    try {
+      const userId = req.session.user.id;
+      const result = await pool.query(`
+        SELECT * FROM inventory 
+        `);
+  
+      res.json({ success: true, items: result.rows });
+    } catch (err) {
+      console.error('Error in /api/inventory/items:', err);
+      res.status(500).json({ success: false, message: 'Failed to load inventory' });
+    }
+  });
+
 
 app.use('/api', apiRouter);
 

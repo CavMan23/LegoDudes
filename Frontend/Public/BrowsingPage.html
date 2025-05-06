@@ -50,19 +50,19 @@
     </footer>
     <script>
         async function addToCart(productId) {
-          const response = await fetch('/api/cart/add', {
+            const response = await fetch('/api/cart/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify({ productId })
-          });
+        });
       
-          const result = await response.json();
-          alert(result.message);
+            const result = await response.json();
+            alert(result.message);
         }
       
         async function loadInventory() {
-          const res = await fetch('/api/inventory', { credentials: 'include' });
+            const res = await fetch('/api/inventory/items', { credentials: 'include' });
           const main = document.getElementById('products');
           main.innerHTML = ''; // Clear placeholder
       
@@ -71,25 +71,26 @@
             return;
           }
       
-          const items = await res.json();
-      
-          if (!Array.isArray(items) || items.length === 0) {
+            const data = await res.json();
+
+            if (!data.success || !Array.isArray(data.items) || data.items.length === 0) {
             main.innerHTML = '<p>Inventory is empty.</p>';
             return;
-          }
-      
-          items.forEach(item => {
+            }
+
+            data.items.forEach(item => {
             const section = document.createElement('section');
             section.className = 'product';
             section.innerHTML = `
-              <h2>${item.productname}</h2>
-              <img src="/images/${item.image_filename}" alt="${item.productname}" style="width:150px;height:auto;">
-              <p>Status: ${item.status}</p>
-              <p>Price: $${item.price}</p>
-              <button onclick="addToCart(${item.productid})">Add to Cart</button>
+                <h2>${item.productname}</h2>
+                <img src="/images/${item.image_filename || 'placeholder.jpg'}" alt="${item.productname}" style="width:150px;height:auto;">
+                <p>Status: ${item.status}</p>
+                <p>Price: $${item.price}</p>
+                <button onclick="addToCart(${item.productid})">Add to Cart</button>
             `;
             main.appendChild(section);
-          });
+            });
+
         }
       
         window.onload = loadInventory;

@@ -21,6 +21,7 @@ CREATE TABLE Inventory (
     Price INT NOT NULL,
     Status VARCHAR(50) NOT NULL,
     CartID INT,
+    image_filename TEXT,
     FOREIGN KEY (CartID) REFERENCES Cart(CartID)
 );
 
@@ -43,8 +44,9 @@ INSERT INTO Cart VALUES (101, 2, 60, 'Pending');
 
 
 -- Inventory
-INSERT INTO Inventory VALUES (201, 'Lego Space Ship', 25, 'Available', 100);
-INSERT INTO Inventory VALUES (202, 'Lego Fire Truck', 35, 'Available', 101);
+INSERT INTO Inventory (ProductID, ProductName, Price, Status, CartID, image_filename)
+VALUES (201, 'AT-AT', 25, 'Available', 100, 'atat.png');
+-- INSERT INTO Inventory VALUES (202, 'Lego Fire Truck', 35, 'Available', 101);
 -- INSERT INTO Inventory VALUES (203, 'Lego Castle', 60, 'Out of Stock', NULL);
 -- INSERT INTO Inventory VALUES (204, 'Lego Police Station', 45, 'Available', 102);
 -- INSERT INTO Inventory VALUES (205, 'Lego Pirate Ship', 70, 'Available', 103);

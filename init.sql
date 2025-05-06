@@ -46,6 +46,12 @@ INSERT INTO Cart VALUES (101, 2, 60, 'Pending');
 -- Inventory
 INSERT INTO Inventory (ProductID, ProductName, Price, Status, CartID, image_filename)
 VALUES (201, 'AT-AT', 25, 'Available', 100, 'atat.png');
+INSERT INTO Inventory (ProductID, ProductName, Price, Status, CartID, image_filename)
+VALUES (202, 'Avengers Tower', 30, 'Available', 75, 'avengers.png');
+INSERT INTO Inventory (ProductID, ProductName, Price, Status, CartID, image_filename)
+VALUES (203, 'Mellenium Falcon', 35, 'Available', 200, 'MF.png');
+INSERT INTO Inventory (ProductID, ProductName, Price, Status, CartID, image_filename)
+VALUES (204, 'Office', 15, 'Available', 85, 'Office.png');
 -- INSERT INTO Inventory VALUES (202, 'Lego Fire Truck', 35, 'Available', 101);
 -- INSERT INTO Inventory VALUES (203, 'Lego Castle', 60, 'Out of Stock', NULL);
 -- INSERT INTO Inventory VALUES (204, 'Lego Police Station', 45, 'Available', 102);

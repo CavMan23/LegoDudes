@@ -35,7 +35,7 @@ async function register(event) {
             console.log(result);
             if(result.success == true){
                alert(`${result.message} for ${result.username}`);
-               window.location.href = "BrowsingPage.html";
+               window.location.href = "/Loginpage.html";
             } else {
                alert(`${result.message}`);
             }

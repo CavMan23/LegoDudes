@@ -118,7 +118,8 @@ app.post("/register", async (req, res) => {
     const result = await pool.query(query, values);
     console.log("user NOW registered ... going to respond");
     console.log(result);
-    res.json({ success: true, message: `${role} account created`, username: `${username}` }); 
+    res.json({ success: true, message: `${role} account created`, username: `${username}` });
+    res.redirect('/LoginPage.html');
   } catch (error) {
     console.log("in catch block of server.js/register");
     console.log(error);
